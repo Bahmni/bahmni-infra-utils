@@ -1,4 +1,5 @@
 # bahmni-infra-utils
+
 Non-application specific utilities for Bahmni infra
 
 ## 📦 [image-scanner.sh](./image-scanner.sh)
@@ -9,13 +10,16 @@ To use this script:
 
 1. Save the script as image-scanner.sh.
 2. Make the script executable by running the following command in your terminal:
-    ```
+
+    ``` bash
     chmod +x image-scanner.sh
     ```
+
 3. Run the script with the organization name as the argument to generate the scan report of the images from bahmni namespace.
 
     Example usage:
-    ```
+
+    ``` bash
     ./image-scanner.sh bahmni
     ```
 
@@ -27,11 +31,33 @@ The provided HTML template is used by the Trivy vulnerability scanner in the `im
 
 ## 📦 [setArtifactVersion.sh](./setArtifactVersion.sh)
 
-This is used in Github Actions to set `ARTIFACT_VERSION` as an environment variable in the actions runner.
+This script is used in GitHub Actions to set `ARTIFACT_VERSION` as an environment variable in the actions runner. It determines the version based on the context of the GitHub event (tag, release branch, or other branch) and supports an optional argument to specify a custom version file. If no version file is provided, the script defaults to using `package/.appversion`.
+
 The version would be set as follows:
-- If the push is a tag the version would be the tag name.
-- If the push is on a branch named `release-<version>` then the version would be `<version>-rc`.
-- If the push is on any other branch, then the version would be `<version>-<github_run_number>`. The version will be read from `package/.appversion`.
+
+- **Tag Push**: If the push is a tag, the version would be the tag name.
+- **Release Branch Push**: If the push is on a branch named `release-<version>`, the version would be `<version>-rc`.
+- **Other Branch Push**:
+  - The version would be `<version>-<github_run_number>`, where `<version>` is read from the specified version file.
+  - If no version file is specified, the version will be read from package/.appversion.
+
+### Usage
+
+The script can be executed with or without passing a custom version file:
+
+- Without a custom version file, in this case, the script will use package/.appversion by default:
+
+``` bash
+./setArtifactVersion.sh
+```
+
+- With a custom version file:
+
+``` bash
+./setArtifactVersion.sh <version> path/to/custom/.appversion
+```
+
+In this case, the version will be read from the specified file (path/to/custom/.appversion).
 
 ## 📦 [transifex.sh](./transifex.sh)
 
@@ -42,13 +68,16 @@ To use this script:
 1. Save the script in your repository.
 2. Make sure to have a `.tx/config` file in your repository for Transifex configuration.
 3. Make the script executable by running the following command in your terminal:
-    ```
+
+    ``` bash
     chmod +x transifex.sh
     ```
+
 4. Run the script with the appropriate argument (push or pull) to perform the desired operation.
 
     Example usage:
-    ```
+
+    ``` bash
     ./transifex.sh push
     ./transifex.sh pull
     ```
@@ -59,15 +88,19 @@ To use this script:
 
 This script can be used in Github Actions to run a [Trivy Filesystem scan](https://aquasecurity.github.io/trivy/v0.19.2/vulnerability/scanning/filesystem/) and [Secrets Scan](https://aquasecurity.github.io/trivy/v0.27.1/docs/secret/scanning/).
 Here are the instructions for how to use it:
+
 - You can add the following step to your Github Actions workflow:
-    ```
+
+    ``` yml
     - name: Trivy Scan
-        run: |
-          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/trivy_scan.sh && chmod +x trivy_scan.sh
-          ./trivy_scan.sh
-          rm trivy_scan.sh.sh
+      run: |
+        wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/trivy_scan.sh && chmod +x trivy_scan.sh
+        ./trivy_scan.sh
+        rm trivy_scan.sh.sh
     ```
+
 This will download the script from the Github repository, make it executable, run it, and then remove it. You can also pass command line arguments to the script in this workflow step to specify the paths to scan.
-```
+
+``` bash
 ./trivy_scan.sh <path> <path> 
 ```
