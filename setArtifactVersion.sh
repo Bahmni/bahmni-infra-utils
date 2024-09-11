@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
+appversionFile=${2:-package/.appversion}
+
 verifyReleaseVersion(){
   version=$1
   tagCount=$(curl -s https://api.github.com/repos/$GITHUB_REPOSITORY/tags | jq --arg tagName "$version"  '[.[] | select( .name == $tagName)] | length')
   if [ $tagCount -gt 0 ]; then
-    echo "Error: Version $version already released. Please update your version in package/.appversion"
+    echo "Error: Version $version already released. Please update your version in $appversionFile"
     exit 1
   fi
 }
@@ -29,7 +31,7 @@ case $GITHUB_REF in
       ;;
   *)
       echo "Current action is neither tag nor release branch.."
-      version=$(cat package/.appversion)
+      version=$(cat "$appversionFile")
       verifyReleaseVersion "$version"
       setArtifactVersion "$version-$GITHUB_RUN_NUMBER"
       ;;
