@@ -31,33 +31,56 @@ The provided HTML template is used by the Trivy vulnerability scanner in the `im
 
 ## 📦 [setArtifactVersion.sh](./setArtifactVersion.sh)
 
-This script is used in GitHub Actions to set `ARTIFACT_VERSION` as an environment variable in the actions runner. It determines the version based on the context of the GitHub event (tag, release branch, or other branch) and supports an optional argument to specify a custom version file. If no version file is provided, the script defaults to using `package/.appversion`.
+This script is used in GitHub Actions to set `ARTIFACT_VERSION` as an environment variable in the actions runner. It determines the version based on the context of the GitHub event (tag, release branch, or other branch) and supports two optional arguments:
 
-The version would be set as follows:
+- **version**: A custom version to be set.
+- **appversionFile**: A custom file path to read the version from if no version is provided.
 
-- **Tag Push**: If the push is a tag, the version would be the tag name.
-- **Release Branch Push**: If the push is on a branch named `release-<version>`, the version would be `<version>-rc`.
+If either or both arguments are omitted, the script will default to using standard values.
+
+The version is set as follows:
+
+- **Tag Push**: If the push is a tag, the version is the tag name.
+- **Release Branch Push**: If the push is on a branch named `release-<version>`, the version is `<version>-rc`.
 - **Other Branch Push**:
-  - The version would be `<version>-<github_run_number>`, where `<version>` is read from the specified version file.
-  - If no version file is specified, the version will be read from package/.appversion.
+  - The version will be `<version>-<github_run_number>`, where `<version>` is read from the specified version file or the default `package/.appversion` file if no file is provided.
+  - If a version is provided as the first argument, it will be used directly instead of reading from a file.
 
 ### Usage
 
-The script can be executed with or without passing a custom version file:
+You can run the script with the following options:
 
-- Without a custom version file, in this case, the script will use package/.appversion by default:
+- **Without arguments**:
 
-``` bash
-./setArtifactVersion.sh
-```
+  ```bash
+  ./setArtifactVersion.sh
+  ```
 
-- With a custom version file:
+  This will use the default file `package/.appversion` to read the version if necessary.
 
-``` bash
-./setArtifactVersion.sh <version> path/to/custom/.appversion
-```
+- **With only the version argument**:
 
-In this case, the version will be read from the specified file (path/to/custom/.appversion).
+  ``` bash
+  ./setArtifactVersion.sh <version>
+  ```
+
+  The script will use the provided version but still default to using `package/.appversion` for the file.
+
+- **With only appversionFile**:
+
+  ``` bash
+  ./setArtifactVersion.sh "" path/to/custom/.appversion
+  ```
+
+    You can pass an empty string (`""`) for the version, followed by the custom appversionFile. The script will then read the version from the provided file and apply the standard logic.
+
+- **With both version and custom appversionFile**:
+
+  ``` bash
+  ./setArtifactVersion.sh <version> path/to/custom/.appversion
+  ```
+
+  This allows specifying both a custom version and a custom file to read from.
 
 ## 📦 [transifex.sh](./transifex.sh)
 

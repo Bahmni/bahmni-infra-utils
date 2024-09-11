@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+version=${1:-}
+
 appversionFile=${2:-package/.appversion}
 
 verifyReleaseVersion(){
@@ -18,21 +20,27 @@ setArtifactVersion(){
   echo "ARTIFACT_VERSION=$version" >> $GITHUB_ENV
 }
 
-case $GITHUB_REF in
-  refs/tags/*)
-      echo "Current action is for tag.."
-      setArtifactVersion "$GITHUB_REF_NAME"
-      ;;
-  refs/heads/release-*)
-      echo "Current action is for release branch.."
-      version=$(echo $GITHUB_REF_NAME | cut -d '-' -f 2)
-      verifyReleaseVersion "$version"
-      setArtifactVersion "$version"-rc
-      ;;
-  *)
-      echo "Current action is neither tag nor release branch.."
-      version=$(cat "$appversionFile")
-      verifyReleaseVersion "$version"
-      setArtifactVersion "$version-$GITHUB_RUN_NUMBER"
-      ;;
-esac
+determineVersion() {
+  if [ -z "$version" ]; then
+    case $GITHUB_REF in
+      refs/tags/*)
+        echo "Current action is for tag.."
+        version=$GITHUB_REF_NAME
+        ;;
+      refs/heads/release-*)
+        echo "Current action is for release branch.."
+        version=$(echo $GITHUB_REF_NAME | cut -d '-' -f 2)
+        version="$version-rc"
+        ;;
+      *)
+        echo "Current action is neither tag nor release branch.."
+        version=$(cat "$appversionFile")
+        version="$version-$GITHUB_RUN_NUMBER"
+        ;;
+    esac
+  fi
+}
+
+determineVersion
+verifyReleaseVersion "$version"
+setArtifactVersion "$version"
