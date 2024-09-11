@@ -39,7 +39,7 @@ The version would be set as follows:
 - **Release Branch Push**: If the push is on a branch named `release-<version>`, the version would be `<version>-rc`.
 - **Other Branch Push**:
   - The version would be `<version>-<github_run_number>`, where `<version>` is read from the specified version file.
-  - If no version file is specified, the version will be read from package/.appversion.
+  - If no version file is specified, the version will be read from `package/.appversion`.
 
 ### Usage
 
@@ -54,7 +54,7 @@ The script can be executed with or without passing a custom version file:
 - With a custom version file:
 
 ``` bash
-./setArtifactVersion.sh <version> path/to/custom/.appversion
+./setArtifactVersion.sh path/to/custom/.appversion
 ```
 
 In this case, the version will be read from the specified file (path/to/custom/.appversion).
