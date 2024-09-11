@@ -5,6 +5,11 @@ version=${1:-}
 
 appversionFile=${2:-package/.appversion}
 
+if [ -z "$GITHUB_REPOSITORY" ] || [ -z "$GITHUB_REF_NAME" ] || [ -z "$GITHUB_REF" ] || [ -z "$GITHUB_ENV" ]; then
+  echo "Error: Required GitHub environment variables are missing."
+  exit 1
+fi
+
 verifyReleaseVersion(){
   version=$1
   tagCount=$(curl -s https://api.github.com/repos/$GITHUB_REPOSITORY/tags | jq --arg tagName "$version"  '[.[] | select( .name == $tagName)] | length')
@@ -34,6 +39,10 @@ determineVersion() {
         ;;
       *)
         echo "Current action is neither tag nor release branch.."
+        if [ ! -f "$appversionFile" ]; then
+          echo "Error: $appversionFile not found."
+          exit 1
+        fi
         version=$(cat "$appversionFile")
         version="$version-$GITHUB_RUN_NUMBER"
         ;;
