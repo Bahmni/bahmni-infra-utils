@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-appversionFile=${2:-package/.appversion}
+appversionFile=${1:-package/.appversion}
 
 verifyReleaseVersion(){
   version=$1
