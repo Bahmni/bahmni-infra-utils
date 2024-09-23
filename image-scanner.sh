@@ -32,7 +32,7 @@ function get_vulnerabilities_count() {
         return 1
     fi
     # Check if there are vulnerabilities
-    vulnerabilities=$(jq '.["Results"][0]["Vulnerabilities"] | length > 0' "$scan_results_file")
+    vulnerabilities=$(jq '.["Results"] | length > 0' "$scan_results_file")
 
     if [[ "$vulnerabilities" != "true" ]]; then
         report_text+=$(severity_count_row "$image" "0" "0" "0" "0" "0")
