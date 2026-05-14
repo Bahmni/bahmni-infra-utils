@@ -101,7 +101,7 @@ ORG="$1"
 # Check if trivy is installed and install it if not
 if ! command -v trivy &> /dev/null; then
     echo "Trivy is not installed. Installing..."
-    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.70.0
     if ! command -v trivy &> /dev/null; then
         echo "Error: Trivy installation failed."
         exit 1
