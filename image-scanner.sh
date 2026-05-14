@@ -98,10 +98,13 @@ fi
 # Get Docker Organization Name from the script argument
 ORG="$1"
 
+# Trivy version to install
+TRIVY_VERSION="0.70.0"
+
 # Check if trivy is installed and install it if not
 if ! command -v trivy &> /dev/null; then
     echo "Trivy is not installed. Installing..."
-    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.70.0
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v${TRIVY_VERSION}
     if ! command -v trivy &> /dev/null; then
         echo "Error: Trivy installation failed."
         exit 1
