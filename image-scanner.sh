@@ -99,7 +99,7 @@ fi
 ORG="$1"
 
 # Trivy version to install
-TRIVY_VERSION="0.70.0"
+TRIVY_VERSION="0.71.2"
 
 # Check if trivy is installed and install it if not
 if ! command -v trivy &> /dev/null; then
